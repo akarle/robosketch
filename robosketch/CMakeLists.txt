@@ -11,6 +11,12 @@ ROSBUILD_GENMSG()
 ROSBUILD_GENSRV()
 
 SET(libs roslib roscpp)
+ROSBUILD_ADD_LIBRARY(Depth2PC STATIC src/DepthImage2PC.cpp)
+
+#uncomment if you have defined messages
+#rosbuild_genmsg()
+#uncomment if you have defined services
+#rosbuild_gensrv()
 
 ROSBUILD_ADD_EXECUTABLE(xy2vw src/xy2vw.cpp)
 TARGET_LINK_LIBRARIES(xy2vw ${libs})
