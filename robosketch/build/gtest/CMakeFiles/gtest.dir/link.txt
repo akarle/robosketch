@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC -O2 -g -DNDEBUG  -shared -Wl,-soname,libgtest.so -o /home/nb950/Desktop/robosketch/robosketch/lib/libgtest.so CMakeFiles/gtest.dir/src/gtest-all.cc.o  -L/home/nb950/Desktop/robosketch/robosketch/build/gtest/src -lpthread -Wl,-rpath,/home/nb950/Desktop/robosketch/robosketch/build/gtest/src 
