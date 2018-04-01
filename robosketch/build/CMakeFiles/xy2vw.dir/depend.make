@@ -3,6 +3,8 @@
 
 CMakeFiles/xy2vw.dir/src/xy2vw.cpp.o: ../src/xy2vw.cpp
 CMakeFiles/xy2vw.dir/src/xy2vw.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Point.h
+CMakeFiles/xy2vw.dir/src/xy2vw.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Twist.h
+CMakeFiles/xy2vw.dir/src/xy2vw.cpp.o: /opt/ros/kinetic/include/geometry_msgs/Vector3.h
 CMakeFiles/xy2vw.dir/src/xy2vw.cpp.o: /opt/ros/kinetic/include/ros/advertise_options.h
 CMakeFiles/xy2vw.dir/src/xy2vw.cpp.o: /opt/ros/kinetic/include/ros/advertise_service_options.h
 CMakeFiles/xy2vw.dir/src/xy2vw.cpp.o: /opt/ros/kinetic/include/ros/assert.h

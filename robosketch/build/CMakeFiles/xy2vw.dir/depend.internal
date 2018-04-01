@@ -4,6 +4,8 @@
 CMakeFiles/xy2vw.dir/src/xy2vw.cpp.o
  /home/nb950/Desktop/robosketch/robosketch/src/xy2vw.cpp
  /opt/ros/kinetic/include/geometry_msgs/Point.h
+ /opt/ros/kinetic/include/geometry_msgs/Twist.h
+ /opt/ros/kinetic/include/geometry_msgs/Vector3.h
  /opt/ros/kinetic/include/ros/advertise_options.h
  /opt/ros/kinetic/include/ros/advertise_service_options.h
  /opt/ros/kinetic/include/ros/assert.h
