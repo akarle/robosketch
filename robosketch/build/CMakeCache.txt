@@ -265,6 +265,9 @@ _CATKIN_GTEST_INCLUDE:FILEPATH=/usr/include/gtest/gtest.h
 //Path to a file.
 _CATKIN_GTEST_SRC:FILEPATH=/usr/src/gtest/src/gtest.cc
 
+//Path to a file.
+_file_name:FILEPATH=/home/nb950/Desktop/robosketch/robosketch/src/xy2vw.cpp
+
 //The directory containing a CMake configuration file for catkin.
 catkin_DIR:PATH=/opt/ros/kinetic/share/catkin/cmake
 
@@ -328,6 +331,12 @@ rospack_DIR:PATH=/opt/ros/kinetic/share/rospack/cmake
 
 //The directory containing a CMake configuration file for rosunit.
 rosunit_DIR:PATH=/opt/ros/kinetic/share/rosunit/cmake
+
+//Value Computed by CMake
+xy2vw_BINARY_DIR:STATIC=/home/nb950/Desktop/robosketch/robosketch/build
+
+//Value Computed by CMake
+xy2vw_SOURCE_DIR:STATIC=/home/nb950/Desktop/robosketch/robosketch
 
 
 ########################
