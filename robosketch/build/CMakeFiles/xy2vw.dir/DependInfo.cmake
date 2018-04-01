@@ -4,27 +4,25 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/usr/src/gtest/src/gtest_main.cc" "/home/nb950/Desktop/robosketch/robosketch/build/gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o"
+  "/home/nb950/Desktop/robosketch/robosketch/src/xy2vw.cpp" "/home/nb950/Desktop/robosketch/robosketch/build/CMakeFiles/xy2vw.dir/src/xy2vw.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # Preprocessor definitions for this target.
 set(CMAKE_TARGET_DEFINITIONS_CXX
-  "GTEST_CREATE_SHARED_LIBRARY=1"
   "ROS_PACKAGE_NAME=\"robosketch\""
   )
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/home/nb950/Desktop/robosketch/robosketch/include"
+  "../include"
   "/opt/ros/kinetic/include"
-  "/usr/src/gtest/include"
-  "/usr/src/gtest"
+  "../msg_gen/cpp/include"
+  "../srv_gen/cpp/include"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/nb950/Desktop/robosketch/robosketch/build/gtest/CMakeFiles/gtest.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.
