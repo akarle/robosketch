@@ -1,0 +1,5 @@
+*.swp
+.DS_STORE
+ubuntu-xenial-16.04-cloudimg-console.log
+robosketch/build/*
+tags
