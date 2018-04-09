@@ -25,6 +25,34 @@ HandClouds FilterBodyFromPC(const PointCloud& pc, float center)
     }
     return hc;
 }
+
+// Helper from vector of Points -> Hand Coordinate (really just y)
+float YFromCloud(const std::vector<Point32>& pc, float baseline)
+{
+    // Find max & min of pc
+    // y is the greatest mag from baseline
+    float y_max = pc[0].y;
+    float y_min = pc[0].y;
+    for(unsigned int i=1; i < pc.size(); i++){
+        if(pc[i].y > y_max){ y_max = pc[i].y; }
+        if(pc[i].y < y_min){ y_min = pc[i].y; }
+    }
+    // even tho might all be on one side... this still checks out
+    float dist_above = fabs(baseline - y_max);
+    float dist_below = fabs(baseline - y_min);
+    if(dist_above > dist_below){ return y_max; } // TODO: check if sign correct?
+    else{ return y_min; }
+}
+
+
+// Helper to go from HandClouds -> Hands
+Hands HandsFromHandClouds(const HandClouds& hc, float baseline)
+{
+    Hands h;
+    h.L_y = YFromCloud(hc.l_points, baseline);
+    h.R_y = YFromCloud(hc.r_points, baseline);
+    return h;
+}
     
 
 Hands getHandsFromHumanCloud(const HumanCloud& hc){
