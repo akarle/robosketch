@@ -56,6 +56,6 @@ Hands HandsFromHandClouds(const HandClouds& hc, float baseline)
     
 
 Hands getHandsFromHumanCloud(const HumanCloud& hc){
-    Hands h;
-    return h;
+    HandClouds clouds = FilterBodyFromPC(hc.pc, hc.nose_x);
+    return HandsFromHandClouds(clouds, hc.arm_baseline);
 }
