@@ -38,11 +38,11 @@ float ymiddle;
 // LEFT HAND DOWN => DRIVE BACKWARD
 // RIGHT HAND UP => TURN LEFT
 // RIGHT HAND UP => TURN RIGHT
-MovementPair convertXY(HandCoordinate L, HandCoordinate R){
+MovementPair convertXY(float L_y, float R_y){
     MovementPair m;
 
-    float v_scale = (L.y - ymiddle) / (ymax - ymiddle);
-    float w_scale = (R.y - ymiddle) / (ymax - ymiddle);
+    float v_scale = (L_y - ymiddle) / (ymax - ymiddle);
+    float w_scale = (R_y - ymiddle) / (ymax - ymiddle);
 
     m.v = MAX_V * v_scale;
     m.w = MAX_W * w_scale;
@@ -54,7 +54,7 @@ MovementPair convertXY(HandCoordinate L, HandCoordinate R){
 void Hands2Movement(Hands h){
     Twist twist;
 
-    MovementPair m = convertXY(h.L, h.R);
+    MovementPair m = convertXY(h.L_y, h.R_y);
 
     CURR_V = m.v;
     CURR_W = m.w;

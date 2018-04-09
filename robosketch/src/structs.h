@@ -5,15 +5,9 @@ struct MovementPair {
     float w;
 };
 
-struct HandCoordinate {
-    bool isRight;
-    float x;
-    float y;
-};
-
 struct Hands {
-    HandCoordinate L;
-    HandCoordinate R;
+    float L_y;
+    float R_y;
 };
 
 // arm_baseline --> y coord from calibration
