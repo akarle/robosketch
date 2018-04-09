@@ -9,6 +9,8 @@
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/Twist.h>
 
+#include "structs.h"
+
 using Eigen::Vector2f;
 using geometry_msgs::Point;
 using std::fabs;
@@ -31,23 +33,6 @@ float CURR_W = 0;
 float ymax;
 float ymin;
 float ymiddle;
-
-
-struct MovementPair {
-    float v;
-    float w;
-};
-
-struct HandCoordinate {
-    bool isRight;
-    float x;
-    float y;
-};
-
-struct Hands {
-    HandCoordinate L;
-    HandCoordinate R;
-};
 
 // LEFT HAND UP => DRIVE FORWARD
 // LEFT HAND DOWN => DRIVE BACKWARD
