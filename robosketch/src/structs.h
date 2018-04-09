@@ -24,3 +24,8 @@ struct HumanCloud {
     float nose_x;
     sensor_msgs::PointCloud pc;
 };
+
+struct HandClouds {
+    std::vector<geometry_msgs::Point32> r_points;
+    std::vector<geometry_msgs::Point32> l_points;
+};
