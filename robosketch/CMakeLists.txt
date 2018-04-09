@@ -12,6 +12,7 @@ ROSBUILD_GENSRV()
 
 SET(libs roslib roscpp)
 ROSBUILD_ADD_LIBRARY(Depth2PC STATIC src/DepthImage2PC.cpp)
+ROSBUILD_ADD_LIBRARY(HandExtractor STATIC src/HandExtractor.cpp)
 
 #uncomment if you have defined messages
 #rosbuild_genmsg()
