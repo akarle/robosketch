@@ -49,8 +49,20 @@ float YFromCloud(const std::vector<Point32>& pc, float baseline)
 Hands HandsFromHandClouds(const HandClouds& hc, float baseline)
 {
     Hands h;
-    h.L_y = YFromCloud(hc.l_points, baseline);
-    h.R_y = YFromCloud(hc.r_points, baseline);
+    if(hc.l_points.size() == 0){
+        ROS_INFO("Empyt Left Arm Cloud");
+        h.L_y = baseline;
+    }
+    else{
+        h.L_y = YFromCloud(hc.l_points, baseline);
+    }
+    if(hc.r_points.size() == 0){
+        ROS_INFO("Empyt Left Arm Cloud");
+        h.R_y = baseline;
+    }
+    else{
+        h.R_y = YFromCloud(hc.r_points, baseline);
+    }
     return h;
 }
     
