@@ -14,14 +14,11 @@
 #include <eigen3/Eigen/Dense>
 #include <geometry_msgs/Point.h>
 
-#include <sensor_msgs/Image.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <ros/ros.h>
 #include <sensor_msgs/point_cloud_conversion.h>
 
 using std::vector;
-using sensor_msgs::Image;
-using sensor_msgs::ImageConstPtr;
 using geometry_msgs::Point;
 using geometry_msgs::Point32;
 using sensor_msgs::PointCloud2;

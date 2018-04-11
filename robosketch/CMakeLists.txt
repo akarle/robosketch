@@ -16,6 +16,12 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
+SET(libs roslib roscpp)
+
+ROSBUILD_ADD_LIBRARY(Depth2PC STATIC src/DepthImage2PC.cpp)
+ROSBUILD_ADD_EXECUTABLE(Depth2PCDriver src/DepthImageDriver.cpp)
+
+TARGET_LINK_LIBRARIES(Depth2PCDriver Depth2PC)
 #uncomment if you have defined messages
 #rosbuild_genmsg()
 #uncomment if you have defined services

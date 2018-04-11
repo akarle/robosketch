@@ -17,6 +17,7 @@ void filterPoints(const PointCloud2 &msg){
 			filtered_points.push_back(pc.points[i]);
 		}
 	}
+
   PointCloud filtered = RANSAC(filtered_points);
   if(filtered.points.size() > 0)
     AvgPoint(filtered.points);
