@@ -6,3 +6,4 @@ robosketch/build/*
 tags
 robosketch/bin/*
 robosketch/lib/*
+*.bag
