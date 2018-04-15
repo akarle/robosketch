@@ -18,10 +18,10 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 SET(libs roslib roscpp)
 
-ROSBUILD_ADD_LIBRARY(Depth2PC STATIC src/DepthImage2PC.cpp)
+ROSBUILD_ADD_LIBRARY(FilterHuman STATIC src/FilterHuman.cpp)
 ROSBUILD_ADD_EXECUTABLE(Depth2PCDriver src/DepthImageDriver.cpp)
 
-TARGET_LINK_LIBRARIES(Depth2PCDriver Depth2PC)
+TARGET_LINK_LIBRARIES(Depth2PCDriver FilterHuman)
 #uncomment if you have defined messages
 #rosbuild_genmsg()
 #uncomment if you have defined services
