@@ -2,12 +2,15 @@
 
 Point32 AvgPoint(vector<Point32> points);
 
-void filterPoints(const PointCloud2 &msg){
-  
-  PointCloud pc;
-  
-  convertPointCloud2ToPointCloud(msg, pc);
+void setPoints(const PointCloud2 &pc){
+  PointCloud temp;
+  convertPointCloud2ToPointCloud(pc, temp);
+  HumanCloud human;
+  Calibrate(temp, human);
+}
 
+void Calibrate(PointCloud &pc, HumanCloud &human){
+  
   size_t size = pc.points.size();
   vector<Point32> filtered_points;
 
@@ -19,12 +22,16 @@ void filterPoints(const PointCloud2 &msg){
 	}
 
   PointCloud filtered = RANSAC(filtered_points);
+  Point32 avg;
   if(filtered.points.size() > 0)
-    AvgPoint(filtered.points);
+    avg = AvgPoint(filtered.points);
 
-  filtered.header = pc.header;
+  human.arm_baseline = avg.y;
+  human.nose_x = avg.x;
 
-  pointPublisher.publish(filtered);	
+  human.pc.header = pc.header;
+  human.pc.points = filtered_points;
+
 }
 
 Point32 AvgPoint(vector<Point32> points){

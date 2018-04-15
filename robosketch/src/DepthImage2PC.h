@@ -18,6 +18,8 @@
 #include <ros/ros.h>
 #include <sensor_msgs/point_cloud_conversion.h>
 
+#include "structs.h"
+
 using std::vector;
 using geometry_msgs::Point;
 using geometry_msgs::Point32;
@@ -31,9 +33,9 @@ using ros::Subscriber;
 using std::fabs;
 using std::rand;
 
-extern Publisher pointPublisher;
+void setPoints(const PointCloud2 &pc);
 
-void filterPoints(const PointCloud2 &pc);
+void Calibrate(PointCloud &pc, HumanCloud &human);
 
 PointCloud RANSAC(const vector<Point32> pc);
 
