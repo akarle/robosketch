@@ -1,3 +1,5 @@
+#ifndef STRUCTS
+#define STRUCTS
 #include <sensor_msgs/PointCloud.h>
 
 struct MovementPair {
@@ -23,3 +25,4 @@ struct HandClouds {
     std::vector<geometry_msgs::Point32> r_points;
     std::vector<geometry_msgs::Point32> l_points;
 };
+#endif

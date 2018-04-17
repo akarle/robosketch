@@ -23,4 +23,6 @@ TARGET_LINK_LIBRARIES(Depth2PCDriver FilterHuman)
 #rosbuild_gensrv()
 
 ROSBUILD_ADD_EXECUTABLE(xy2vw src/xy2vw.cpp)
+ROSBUILD_ADD_EXECUTABLE(viznode src/viznode.cpp)
 TARGET_LINK_LIBRARIES(xy2vw ${libs})
+TARGET_LINK_LIBRARIES(viznode ${libs} FilterHuman HandExtractor)
