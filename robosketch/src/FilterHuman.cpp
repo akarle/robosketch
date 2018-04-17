@@ -1,4 +1,4 @@
-#include "DepthImage2PC.h"
+#include "FilterHuman.h"
 
 Point32 AvgPoint(vector<Point32> points);
 static vector<Point32> RANSAC(const vector<Point32> pc);

@@ -1,4 +1,4 @@
-#include "DepthImage2PC.h"
+#include "FilterHuman.h"
 
 Publisher pointPublisher;
 
@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 
   pointPublisher = n.advertise<PointCloud>("points", 10);
 
-  Subscriber pointSub = n.subscribe("/camera/depth/points",10,filterPoints);
+  Subscriber pointSub = n.subscribe("/camera/depth/points", 10, setPoints);
 
 
   ros::Rate loop_rate(30);
