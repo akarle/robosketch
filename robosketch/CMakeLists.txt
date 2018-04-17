@@ -14,6 +14,12 @@ SET(libs roslib roscpp)
 ROSBUILD_ADD_LIBRARY(Depth2PC STATIC src/DepthImage2PC.cpp)
 ROSBUILD_ADD_LIBRARY(HandExtractor STATIC src/HandExtractor.cpp)
 
+SET(libs roslib roscpp)
+
+ROSBUILD_ADD_LIBRARY(FilterHuman STATIC src/FilterHuman.cpp)
+ROSBUILD_ADD_EXECUTABLE(Depth2PCDriver src/DepthImageDriver.cpp)
+
+TARGET_LINK_LIBRARIES(Depth2PCDriver FilterHuman)
 #uncomment if you have defined messages
 #rosbuild_genmsg()
 #uncomment if you have defined services
