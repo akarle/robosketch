@@ -4,35 +4,6 @@
 static vector<Point32> findInliers(Vector3f p0, const vector<Point32> points, double epsilon);
 
 
-static void publishPoint(Point32 point){
-  
-  visualization_msgs::MarkerArray arr;
-
-  // instantiate base marker to keep editing and pushing
-  visualization_msgs::Marker marker;
-  marker.header.frame_id = "/camera_depth_optical_frame";
-  marker.header.stamp = ros::Time();
-  marker.ns = "my_namespace";
-  marker.type = visualization_msgs::Marker::SPHERE;
-  marker.action = visualization_msgs::Marker::ADD;
-  marker.scale.x = 0.1;
-  marker.scale.y = 0.1;
-  marker.scale.z = 0.1;
-  marker.color.a = 1.0; // Don't forget to set the alpha!
-  marker.color.b = 0.0;
-  marker.color.r = 1.0;
-  marker.color.g = 0.0;
-
-  marker.id = 10;
-
-  marker.pose.position.x = point.x;
-  marker.pose.position.y = point.y;
-  marker.pose.position.z = point.z;
-
-  arr.markers.push_back(marker);
-  
-  vis_pub.publish(arr);
-}
 /************************************************************
  * For use only in tester node.                             *
  ***********************************************************/
@@ -85,8 +56,7 @@ void Calibrate(PointCloud &pc, HumanCloud &human){
   PointCloud h;
   h.header = pc.header;
   h.points = filtered_points;
-  human_pub.publish(h);
-
+  
   vector<Point32> filtered = RANSAC(filtered_points); //Should be arm
   Point32 avg;
   if(filtered.size() > 0){
@@ -96,17 +66,12 @@ void Calibrate(PointCloud &pc, HumanCloud &human){
     arms.points = filtered;
 
     avg = AvgPoint(filtered);
-    publishPoint(avg);
-
-    //publishPoint(avg);
 
     human.arm_baseline = avg.y;
     human.nose_x = avg.x;
 
     human.pc.header = pc.header;
     human.pc.points = filtered_points;
-
-    point_pub.publish(arms);
   }
   else {
     human.arm_baseline = -1;

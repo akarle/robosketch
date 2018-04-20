@@ -2,10 +2,6 @@
 
 #include "../src/FilterHuman.h"
 
-ros::Publisher vis_pub;
-ros::Publisher point_pub;
-ros::Publisher human_pub;
-
 TEST(FilterHuman, AvgPoints){
   Point32 a;
   a.x = 1.0;

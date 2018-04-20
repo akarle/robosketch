@@ -2,6 +2,7 @@
  * The job of this node is to spin and listen for bag files and publish
  * both the kinect pointclouds and also markers for the hands
  */
+
 #include "ros/ros.h"
 #include "HandExtractor.h"
 #include "FilterHuman.h"
@@ -9,9 +10,6 @@
 #include <visualization_msgs/MarkerArray.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/point_cloud_conversion.h>
-
-//extern ros::Publisher vis_pub;
-//extern ros::Publisher point_pub;
 
 HumanCloud base;
 ros::Publisher vis_pub;
@@ -23,7 +21,6 @@ void bagcb(const sensor_msgs::PointCloud2& cloud)
     sensor_msgs::PointCloud pc;
     sensor_msgs::convertPointCloud2ToPointCloud(cloud, pc);
 
-    // TODO: get Alex G's filtering...
     if(base.nose_x == -1 || base.arm_baseline == -1){
         int num_cal = 0;
         HumanCloud temp;
@@ -42,7 +39,6 @@ void bagcb(const sensor_msgs::PointCloud2& cloud)
     else{
         // Filter Human
         HumanCloud hc;
-        //ROS_INFO("Pre Filter");
         FilterHuman(pc, hc);
         human_pub.publish(hc.pc);
         hc.nose_x = base.nose_x;
@@ -66,21 +62,7 @@ void bagcb(const sensor_msgs::PointCloud2& cloud)
         marker.color.r = 0.0;
         marker.color.g = 1.0;
 
-        // Go through HC and add all to marker arr
-        /*
-        for(unsigned int i = 0; i < hc.pc.points.size(); i++){
-            // give marker a unique id and the proper coords / color
-            marker.id = 11 + i;
-            marker.pose.position.x = hc.pc.points[i].x;
-            marker.pose.position.y = hc.pc.points[i].y;
-
-            // push back into arr
-            arr.markers.push_back(marker);
-        }*/
-
-
         // Get Hands from hc
-        //ROS_INFO("Pre Get Hands");
         Hands h = getHandsFromHumanCloud(hc);
 
         // Publish markers for hands!
@@ -106,7 +88,6 @@ void bagcb(const sensor_msgs::PointCloud2& cloud)
 
         // Publish them!
         vis_pub.publish(arr);
-        //ROS_INFO("Post Publish");
     }
 }
 

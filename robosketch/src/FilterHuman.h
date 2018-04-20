@@ -35,9 +35,11 @@ using ros::Subscriber;
 using std::fabs;
 using std::rand;
 
+#ifdef VIS
 extern ros::Publisher vis_pub;
 extern ros::Publisher point_pub;
 extern ros::Publisher human_pub;
+#endif
 
 void setPoints(const PointCloud2 &pc);
 void Calibrate(PointCloud &pc, HumanCloud &human);
