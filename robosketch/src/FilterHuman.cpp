@@ -1,9 +1,38 @@
 #include "FilterHuman.h"
 
-Point32 AvgPoint(vector<Point32> points);
-static vector<Point32> RANSAC(const vector<Point32> pc);
+
 static vector<Point32> findInliers(Vector3f p0, const vector<Point32> points, double epsilon);
 
+
+static void publishPoint(Point32 point){
+  
+  visualization_msgs::MarkerArray arr;
+
+  // instantiate base marker to keep editing and pushing
+  visualization_msgs::Marker marker;
+  marker.header.frame_id = "/camera_depth_optical_frame";
+  marker.header.stamp = ros::Time();
+  marker.ns = "my_namespace";
+  marker.type = visualization_msgs::Marker::SPHERE;
+  marker.action = visualization_msgs::Marker::ADD;
+  marker.scale.x = 0.1;
+  marker.scale.y = 0.1;
+  marker.scale.z = 0.1;
+  marker.color.a = 1.0; // Don't forget to set the alpha!
+  marker.color.b = 0.0;
+  marker.color.r = 1.0;
+  marker.color.g = 0.0;
+
+  marker.id = 10;
+
+  marker.pose.position.x = point.x;
+  marker.pose.position.y = point.y;
+  marker.pose.position.z = point.z;
+
+  arr.markers.push_back(marker);
+  
+  vis_pub.publish(arr);
+}
 /************************************************************
  * For use only in tester node.                             *
  ***********************************************************/
@@ -13,6 +42,18 @@ void setPoints(const PointCloud2 &pc){
   convertPointCloud2ToPointCloud(pc, temp);
   HumanCloud human;
   Calibrate(temp, human);
+}
+
+
+void FilterHuman(PointCloud &pc, HumanCloud &human){
+
+  human.pc.header = pc.header;
+  for(size_t i = 0; i < pc.points.size(); i++){
+    double depth = pc.points[i].z;
+    if(depth < 1.8 && depth > 1.5){
+      human.pc.points.push_back(pc.points[i]);
+    }
+  }
 }
 
 
@@ -28,32 +69,49 @@ void setPoints(const PointCloud2 &pc){
  *                             reference                    *
  ************************************************************
  */
- 
 
 
 void Calibrate(PointCloud &pc, HumanCloud &human){
-  
+
   size_t size = pc.points.size();
   vector<Point32> filtered_points;
 
-	for(size_t i = 0; i < size; i++){
+  for(size_t i = 0; i < size; i++){
     double depth = pc.points[i].z;
-		if(depth < 1.8 && depth > 1.5){
-			filtered_points.push_back(pc.points[i]);
-		}
-	}
+    if(depth < 1.8 && depth > 1.5){
+      filtered_points.push_back(pc.points[i]); //Should be human
+    }
+  }
+  PointCloud h;
+  h.header = pc.header;
+  h.points = filtered_points;
+  human_pub.publish(h);
 
-  vector<Point32> filtered = RANSAC(filtered_points);
+  vector<Point32> filtered = RANSAC(filtered_points); //Should be arm
   Point32 avg;
-  if(filtered.size() > 0)
+  if(filtered.size() > 0){
+
+    PointCloud arms;
+    arms.header = pc.header;
+    arms.points = filtered;
+
     avg = AvgPoint(filtered);
+    publishPoint(avg);
 
-  human.arm_baseline = avg.y;
-  human.nose_x = avg.x;
+    //publishPoint(avg);
 
-  human.pc.header = pc.header;
-  human.pc.points = filtered_points;
+    human.arm_baseline = avg.y;
+    human.nose_x = avg.x;
 
+    human.pc.header = pc.header;
+    human.pc.points = filtered_points;
+
+    point_pub.publish(arms);
+  }
+  else {
+    human.arm_baseline = -1;
+    human.nose_x = -1;
+  }
 }
 
 Point32 AvgPoint(vector<Point32> points){
@@ -78,39 +136,42 @@ Point32 AvgPoint(vector<Point32> points){
   return ret;
 }
 
-static vector<Point32> RANSAC(const vector<Point32> points){
+vector<Point32> RANSAC(const vector<Point32> points){
 
-  const double threshold = .35;
+  const double threshold = .42;
   double percentage_inliers = 0;
-  
+
   vector<Point32> ilyers;
 
   int size = points.size();
   if(size > 0){
     int iter = 0;
+    Point32 p0;
     while(percentage_inliers < threshold && iter < 300){
 
-      Point32 p0 = points[rand() % size];
+      ilyers.clear();
+      p0 = points[rand() % size]; // get random point
 
-      Vector3f P0(p0.x, p0.y, p0.z);
+      Vector3f P0(p0.x, p0.y, p0.z); 
 
-      ilyers = findInliers(P0, points, .0700);
+      ilyers = findInliers(P0, points, .0600);
 
       percentage_inliers = (double) ilyers.size() / (double) size;
       ++iter;
     }
-    if(iter < 100) 
+    if(iter < 300) {
       ROS_INFO("Converged in %d iterations", iter);
+    }
     else{
       ROS_INFO("Could not fit line");
       ilyers.clear();
     }
+
+    return ilyers;
   }else{
     ROS_INFO("no points");
   }
 
-  return ilyers;
-  
 }
 
 static vector<Point32> findInliers(Vector3f p0, const vector<Point32> points, double epsilon)
