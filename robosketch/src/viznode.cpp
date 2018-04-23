@@ -12,28 +12,96 @@
 #include <sensor_msgs/point_cloud_conversion.h>
 
 HumanCloud base;
+
 ros::Publisher vis_pub;
 ros::Publisher point_pub;
 ros::Publisher human_pub;
+ros::Publisher left_pub;
+ros::Publisher right_pub;
 
-void bagcb(const sensor_msgs::PointCloud2& cloud)
+void publishPoints(float arm_baseline, float nose_x, float R_y, float L_y){
+    // Prepare markers...
+    visualization_msgs::MarkerArray arr;
+
+    // instantiate base marker to keep editing and pushing
+    visualization_msgs::Marker marker;
+    marker.header.frame_id = "/camera_depth_optical_frame";
+    marker.header.stamp = ros::Time();
+    marker.ns = "my_namespace";
+    marker.type = visualization_msgs::Marker::SPHERE;
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.scale.x = 0.1;
+    marker.scale.y = 0.1;
+    marker.scale.z = 0.1;
+    marker.color.a = 1.0; // Don't forget to set the alpha!
+    marker.color.b = 0.0;
+    marker.color.r = 0.0;
+    marker.color.g = 1.0;
+
+
+    // Publish markers for hands!
+    marker.type = visualization_msgs::Marker::CUBE;
+    marker.scale.x = 0.5;
+    marker.scale.y = 0.5;
+    marker.scale.z = 0.5;
+    marker.color.b = 1.0;
+    marker.color.r = 0.0;
+    marker.color.g = 0.0;
+
+    // Left hand
+    marker.id = 100000;
+    marker.pose.position.x = -1; // some random number...
+    marker.pose.position.y = L_y;
+    marker.pose.position.z = 1.5;
+    arr.markers.push_back(marker);
+    // Right hand
+    marker.id = 100001;
+    marker.pose.position.x = 1; // some random number...
+    marker.pose.position.y = R_y;
+    marker.pose.position.z = 1.5;
+    arr.markers.push_back(marker);
+
+
+    // Nose x
+    marker.id = 100002;
+    marker.pose.position.x = nose_x; // some random number...
+    marker.pose.position.y = arm_baseline;
+    marker.pose.position.z = 1.5;
+    marker.scale.x = 0.2;
+    marker.scale.y = 0.2;
+    marker.scale.z = 0.2;
+    arr.markers.push_back(marker);
+
+    // Publish them!
+    vis_pub.publish(arr);
+
+}
+
+void CloudCallBack(const sensor_msgs::PointCloud2& cloud)
 {
     sensor_msgs::PointCloud pc;
     sensor_msgs::convertPointCloud2ToPointCloud(cloud, pc);
 
-    if(base.nose_x == -1 || base.arm_baseline == -1){
+    if(base.arm_baseline == -1){
+
         int num_cal = 0;
+        int num_fail = 0;
+
         HumanCloud temp;
         while(num_cal < 5){
-          Calibrate(pc, temp);
-          if(temp.nose_x != -1 && temp.arm_baseline != -1){
-            base.nose_x += temp.nose_x;
-            base.arm_baseline += temp.arm_baseline;
-            ++num_cal;
-          }
+            Calibrate(pc, temp);
+            if(temp.arm_baseline != -1){
+                base.arm_baseline += temp.arm_baseline;
+                ++num_cal;
+            }else {
+                ++num_fail;
+                if(num_fail > 5) return;
+            }
         }
-        base.nose_x /= num_cal;
         base.arm_baseline /= num_cal;
+        base.max_x = temp.max_x;
+        base.min_x = temp.min_x;
+
     }
 
     else{
@@ -41,53 +109,17 @@ void bagcb(const sensor_msgs::PointCloud2& cloud)
         HumanCloud hc;
         FilterHuman(pc, hc);
         human_pub.publish(hc.pc);
-        hc.nose_x = base.nose_x;
+
         hc.arm_baseline = base.arm_baseline;
+        hc.min_x = base.min_x;
+        hc.max_x = base.max_x;
 
-        // Prepare markers...
-        visualization_msgs::MarkerArray arr;
-
-        // instantiate base marker to keep editing and pushing
-        visualization_msgs::Marker marker;
-        marker.header.frame_id = "/camera_depth_optical_frame";
-        marker.header.stamp = ros::Time();
-        marker.ns = "my_namespace";
-        marker.type = visualization_msgs::Marker::SPHERE;
-        marker.action = visualization_msgs::Marker::ADD;
-        marker.scale.x = 0.1;
-        marker.scale.y = 0.1;
-        marker.scale.z = 0.1;
-        marker.color.a = 1.0; // Don't forget to set the alpha!
-        marker.color.b = 0.0;
-        marker.color.r = 0.0;
-        marker.color.g = 1.0;
+        float nose_x = (hc.max_x + hc.min_x)/2;
 
         // Get Hands from hc
         Hands h = getHandsFromHumanCloud(hc);
-
-        // Publish markers for hands!
-        marker.type = visualization_msgs::Marker::CUBE;
-        marker.scale.x = 0.5;
-        marker.scale.y = 0.5;
-        marker.scale.z = 0.5;
-        marker.color.b = 1.0;
-        marker.color.r = 0.0;
-        marker.color.g = 0.0;
-
-        // Left hand
-        marker.id = 100000;
-        marker.pose.position.x = -1; // some random number...
-        marker.pose.position.y = h.L_y;
-        marker.pose.position.z = 1.5;
-        arr.markers.push_back(marker);
-        marker.id = 100001;
-        marker.pose.position.x = 1; // some random number...
-        marker.pose.position.y = h.R_y;
-        marker.pose.position.z = 1.5;
-        arr.markers.push_back(marker);
-
-        // Publish them!
-        vis_pub.publish(arr);
+        
+        publishPoints(base.arm_baseline, nose_x, h.R_y,h.L_y);
     }
 }
 
@@ -96,19 +128,21 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "viznode");
     ros::NodeHandle n;
 
-    base.nose_x = -1;
     base.arm_baseline = -1;
 
     // Subscribe to the bag point clouds
-    ros::Subscriber sub = n.subscribe("/camera/depth/points", 1000, bagcb);
+    ros::Subscriber sub = n.subscribe("/camera/depth/points", 1000, CloudCallBack);
     vis_pub = n.advertise<visualization_msgs::MarkerArray>("visualization_marker_array", 1000);
     point_pub = n.advertise<PointCloud>("arm_points", 1000);
     human_pub = n.advertise<PointCloud>("human_points", 1000);
+    left_pub = n.advertise<PointCloud>("left_points", 1000);
+    right_pub = n.advertise<PointCloud>("right_points", 1000);
+
 
     ros::Rate loop(30.0);
-    while(ros::ok){
-      ros::spinOnce();
-      loop.sleep();
+    while(ros::ok()){
+        ros::spinOnce();
+        loop.sleep();
     }
 
     return 0;

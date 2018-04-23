@@ -4,11 +4,12 @@ using sensor_msgs::PointCloud;
 using geometry_msgs::Point32;
 
 // Globals:
-float BODY_TOL = .2; // 20 cm on either side of center ignored
 
 // Helper function to filter PC for the body
-HandClouds FilterBodyFromPC(const PointCloud& pc, float center)
+HandClouds FilterBodyFromPC(const HumanCloud& human, float center)
 {
+    PointCloud pc = human.pc;
+    float BODY_TOL = fabs(human.min_x - human.max_x)/6.0;
     // Go through the PC and eliminate all that are outside
     // BODY_TOL of center
     HandClouds hc;
@@ -23,6 +24,19 @@ HandClouds FilterBodyFromPC(const PointCloud& pc, float center)
             }
         }
     }
+
+    PointCloud left;
+    PointCloud right;
+
+    left.header = pc.header;
+    right.header = pc.header;
+
+    left.points = hc.l_points;
+    right.points = hc.r_points;
+
+    left_pub.publish(left);
+    right_pub.publish(right);
+
     return hc;
 }
 
@@ -40,9 +54,9 @@ float YFromCloud(const std::vector<Point32>& pc, float baseline)
     // even tho might all be on one side... this still checks out
     float dist_above = fabs(baseline - y_max);
     float dist_below = fabs(baseline - y_min);
-    if(dist_above > dist_below){ return y_max; } // TODO: check if sign correct?
-    else{ return y_min; }
-}
+    if(dist_above > dist_below){ return y_max; }  
+    else{ return y_min; } }
+
 
 
 // Helper to go from HandClouds -> Hands
@@ -50,14 +64,12 @@ Hands HandsFromHandClouds(const HandClouds& hc, float baseline)
 {
     Hands h;
     if(hc.l_points.size() == 0){
-        ROS_INFO("Empyt Left Arm Cloud");
         h.L_y = baseline;
     }
     else{
         h.L_y = YFromCloud(hc.l_points, baseline);
     }
     if(hc.r_points.size() == 0){
-        ROS_INFO("Empyt Left Arm Cloud");
         h.R_y = baseline;
     }
     else{
@@ -68,6 +80,7 @@ Hands HandsFromHandClouds(const HandClouds& hc, float baseline)
     
 
 Hands getHandsFromHumanCloud(const HumanCloud& hc){
-    HandClouds clouds = FilterBodyFromPC(hc.pc, hc.nose_x);
+    float nose_x = (hc.min_x + hc.max_x) / 2;
+    HandClouds clouds = FilterBodyFromPC(hc, nose_x);
     return HandsFromHandClouds(clouds, hc.arm_baseline);
 }

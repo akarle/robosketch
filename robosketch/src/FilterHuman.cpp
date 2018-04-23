@@ -15,16 +15,27 @@ void setPoints(const PointCloud2 &pc){
   Calibrate(temp, human);
 }
 
-
 void FilterHuman(PointCloud &pc, HumanCloud &human){
 
   human.pc.header = pc.header;
+  float max_x = FLT_MIN; 
+  float min_x = FLT_MAX;
+
   for(size_t i = 0; i < pc.points.size(); i++){
     double depth = pc.points[i].z;
+    double x = pc.points[i].x;
+
     if(depth < 1.8 && depth > 1.5){
       human.pc.points.push_back(pc.points[i]);
+      if(x < min_x) min_x = x;
+      if(x > max_x) max_x = x;
+
     }
   }
+
+  human.max_x = max_x;
+  human.min_x = min_x;
+
 }
 
 
@@ -44,20 +55,9 @@ void FilterHuman(PointCloud &pc, HumanCloud &human){
 
 void Calibrate(PointCloud &pc, HumanCloud &human){
 
-  size_t size = pc.points.size();
-  vector<Point32> filtered_points;
-
-  for(size_t i = 0; i < size; i++){
-    double depth = pc.points[i].z;
-    if(depth < 1.8 && depth > 1.5){
-      filtered_points.push_back(pc.points[i]); //Should be human
-    }
-  }
-  PointCloud h;
-  h.header = pc.header;
-  h.points = filtered_points;
+ FilterHuman(pc, human);
   
-  vector<Point32> filtered = RANSAC(filtered_points); //Should be arm
+  vector<Point32> filtered = RANSAC(human.pc.points); //Should be arm
   Point32 avg;
   if(filtered.size() > 0){
 
@@ -68,14 +68,9 @@ void Calibrate(PointCloud &pc, HumanCloud &human){
     avg = AvgPoint(filtered);
 
     human.arm_baseline = avg.y;
-    human.nose_x = avg.x;
-
-    human.pc.header = pc.header;
-    human.pc.points = filtered_points;
   }
   else {
     human.arm_baseline = -1;
-    human.nose_x = -1;
   }
 }
 

@@ -16,4 +16,8 @@
 #include <sensor_msgs/PointCloud.h>
 
 #include "structs.h"
+
+extern ros::Publisher left_pub;
+extern ros::Publisher right_pub;
+
 Hands getHandsFromHumanCloud(const HumanCloud& hc);

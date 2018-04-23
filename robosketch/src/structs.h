@@ -17,7 +17,8 @@ struct Hands {
 // pc --> filtered point cloud
 struct HumanCloud {
     float arm_baseline;
-    float nose_x;
+    float max_x;
+    float min_x;
     sensor_msgs::PointCloud pc;
 };
 
