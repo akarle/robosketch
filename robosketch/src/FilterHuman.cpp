@@ -4,17 +4,6 @@
 static vector<Point32> findInliers(Vector3f p0, const vector<Point32> points, double epsilon);
 
 
-/************************************************************
- * For use only in tester node.                             *
- ***********************************************************/
-
-void setPoints(const PointCloud2 &pc){
-    PointCloud temp;
-    convertPointCloud2ToPointCloud(pc, temp);
-    HumanCloud human;
-    Calibrate(temp, human);
-}
-
 void FilterHuman(PointCloud &pc, HumanCloud &human){
 
     human.pc.header = pc.header;
