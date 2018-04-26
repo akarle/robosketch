@@ -14,6 +14,8 @@ SET(libs roslib roscpp)
 ROSBUILD_ADD_LIBRARY(Depth2PC STATIC src/DepthImage2PC.cpp)
 ROSBUILD_ADD_LIBRARY(HandExtractor STATIC src/HandExtractor.cpp)
 
+find_package(OpenCV)
+include_directories(${OpenCV_INCLUDE_DIRS})
 #uncomment if you have defined messages
 #rosbuild_genmsg()
 #uncomment if you have defined services
@@ -21,3 +23,7 @@ ROSBUILD_ADD_LIBRARY(HandExtractor STATIC src/HandExtractor.cpp)
 
 ROSBUILD_ADD_EXECUTABLE(xy2vw src/xy2vw.cpp)
 TARGET_LINK_LIBRARIES(xy2vw ${libs})
+
+ROSBUILD_ADD_EXECUTABLE(BoundaryCheck src/BoundaryCheck.cpp)
+TARGET_LINK_LIBRARIES(BoundaryCheck ${libs})
+TARGET_LINK_LIBRARIES(BoundaryCheck ${OpenCV_LIBRARIES})
