@@ -137,23 +137,7 @@ void CloudCallBack(const sensor_msgs::PointCloud2& cloud)
 
     // if base arm baseline unset (-1) calibrate!
     if(base.arm_baseline == -1){
-        int num_cal = 0;
-        int num_fail = 0;
-
-        HumanCloud temp;
-        while(num_cal < 5){
-            Calibrate(pc, temp);
-            if(temp.arm_baseline != -1){
-                base.arm_baseline += temp.arm_baseline;
-                ++num_cal;
-            }else {
-                ++num_fail;
-                if(num_fail > 5) return;
-            }
-        }
-        base.arm_baseline /= num_cal;
-        base.max_x = temp.max_x;
-        base.min_x = temp.min_x;
+        Calibrate(pc, base);
     }
 
     // else u calibrated --> get those commands!
