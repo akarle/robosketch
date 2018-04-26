@@ -8,7 +8,7 @@ foo@bar:~$ export ROS_MASTER_URI=http://(Master Ip Address)
 ```
 3) On master, with kinect pluged in
 ```sh
-foo@bar:~$ roscore
+foo@bar:~$ roscore &
 foo@bar:~$ roslaunch openni_launch openni.launch &
 ```
 4) Once person is standing between 1.5 and 1.8 meters away from the kinect and is ready to calibrate
