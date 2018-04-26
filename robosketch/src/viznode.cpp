@@ -103,6 +103,9 @@ MovementPair convertXY(float L_y, float R_y, float arm_baseline, float ymax){
     // cap scales at 1 in case user jumps or somehow gets scale > 1
     if(v_scale > 1) v_scale = 1.0;
     if(w_scale > 1) w_scale = 1.0;
+    
+    if(v_scale < .1) v_scale = 0;
+    if(w_scale < .1) w_scale = 0;
 
     // TODO: "move in direction" if change is bigger than feasible!
     // (use CMD_HZ, MAX_DV, MAX_DW, CURR_V, CURR_W)
