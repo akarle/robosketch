@@ -61,6 +61,7 @@ void Calibrate(PointCloud &pc, HumanCloud &human){
     }
     else {
         human.arm_baseline = -1;
+        return;
     }
 }
 
@@ -97,29 +98,29 @@ vector<Point32> RANSAC(const vector<Point32> points){
     if(size > 0){
         int iter = 0;
         Point32 p0;
-        while(percentage_inliers < threshold && iter < 300){
 
-            ilyers.clear();
-            p0 = points[rand() % size]; // get random point
+        ilyers.clear();
+        p0 = points[rand() % size]; // get random point
 
-            Vector3f P0(p0.x, p0.y, p0.z); 
+        Vector3f P0(p0.x, p0.y, p0.z); 
 
-            ilyers = findInliers(P0, points, .0600);
+        ilyers = findInliers(P0, points, .0600);
 
-            percentage_inliers = (double) ilyers.size() / (double) size;
-            ++iter;
-        }
-        if(iter < 300) {
+        percentage_inliers = (double) ilyers.size() / (double) size;
+        ++iter;
+        if(percentage_inliers >= threshold) {
             ROS_INFO("Converged in %d iterations", iter);
+            return ilyers;
         }
         else{
             ROS_INFO("Could not fit line");
             ilyers.clear();
+            return ilyers;
         }
 
-        return ilyers;
     }else{
         ROS_INFO("no points");
+        return ilyers;
     }
 
 }

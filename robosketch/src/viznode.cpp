@@ -31,6 +31,8 @@ const float CMD_HZ = 0.05;
 float CURR_V = 0;
 float CURR_W = 0;
 
+bool calibrate_attempted = false;
+
 void publishPoints(float arm_baseline, float nose_x, float R_y, float L_y){
     // Prepare markers...
     visualization_msgs::MarkerArray arr;
@@ -130,19 +132,28 @@ void CloudCallBack(const sensor_msgs::PointCloud2& cloud)
     sensor_msgs::PointCloud pc;
     sensor_msgs::convertPointCloud2ToPointCloud(cloud, pc);
 
+    HumanCloud hc;
+    FilterHuman(pc, hc);
+    human_pub.publish(hc.pc);
     // if base arm baseline unset (-1) calibrate!
     if(base.arm_baseline == -1){
+        if(calibrate_attempted){
+            ROS_INFO("Could not Calibrate, exiting");
+            exit(1);
+        }
         Calibrate(pc, base);
+        calibrate_attempted = true;
+        return;
     }
 
     // else u calibrated --> get those commands!
     else{
         // Filter Human
-        HumanCloud hc;
-        FilterHuman(pc, hc);
+        //HumanCloud hc;
+        //FilterHuman(pc, hc);
 
         // publish human points for testing
-        human_pub.publish(hc.pc);
+        //human_pub.publish(hc.pc);
 
         hc.arm_baseline = base.arm_baseline;
         hc.min_x = base.min_x;
@@ -170,7 +181,7 @@ int main(int argc, char **argv)
     base.arm_baseline = -1;
 
     // Subscribe to the bag point clouds
-    ros::Subscriber sub = n.subscribe("/camera/depth/points", 1000, CloudCallBack);
+    ros::Subscriber sub = n.subscribe("/camera/depth/points", 10, CloudCallBack);
     vis_pub = n.advertise<visualization_msgs::MarkerArray>("visualization_marker_array", 1000);
     point_pub = n.advertise<PointCloud>("arm_points", 1000);
     human_pub = n.advertise<PointCloud>("human_points", 1000);
