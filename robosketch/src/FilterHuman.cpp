@@ -113,13 +113,12 @@ vector<Point32> RANSAC(const vector<Point32> points){
             return ilyers;
         }
         else{
-            ROS_INFO("Could not fit line");
             ilyers.clear();
             return ilyers;
         }
 
     }else{
-        ROS_INFO("no points");
+        ROS_INFO("no points found");
         return ilyers;
     }
 
