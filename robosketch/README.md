@@ -22,7 +22,8 @@ roscore &
 make
 roslaunch openni_launch openni.launch &
 ```
-4) Once person is standing between 1.5 and 1.8 meters away from the kinect and is ready to calibrate
+4) Once person is standing between 1.5 and 1.8 meters away from the kinect and is ready to calibrate. Note that if it cannot calibrate the program will exit and you will have to rerun it until it calibrates.
+
 ```sh
 rosrun robosketch viznode 
 ```
