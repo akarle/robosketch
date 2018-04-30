@@ -187,7 +187,7 @@ int main(int argc, char **argv)
     human_pub = n.advertise<PointCloud>("human_points", 1000);
     left_pub = n.advertise<PointCloud>("left_points", 1000);
     right_pub = n.advertise<PointCloud>("right_points", 1000);
-    movement_publisher_ = n.advertise<geometry_msgs::Twist>("robosketch/commands", 10);
+    movement_publisher_ = n.advertise<geometry_msgs::Twist>("/robosketch/commands", 10);
 
     ros::Rate loop(30.0);
     while(ros::ok()){
