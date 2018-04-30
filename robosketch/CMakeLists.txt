@@ -27,3 +27,6 @@ TARGET_LINK_LIBRARIES(xy2vw ${libs})
 ROSBUILD_ADD_EXECUTABLE(BoundaryCheck src/BoundaryCheck.cpp)
 TARGET_LINK_LIBRARIES(BoundaryCheck ${libs})
 TARGET_LINK_LIBRARIES(BoundaryCheck ${OpenCV_LIBRARIES})
+
+ROSBUILD_ADD_EXECUTABLE(VelPublisher src/VelPublisher.cpp)
+TARGET_LINK_LIBRARIES(VelPublisher ${libs})

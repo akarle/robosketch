@@ -24,14 +24,17 @@ void boundaryCheckCallback(const sensor_msgs::ImageConstPtr& msg) {
 	cv::cvtColor(colorImage,grayscaleImage,CV_RGB2GRAY);
 	cv::Mat threshImage;
 	bool updatedIsNearEdge = false;
-	threshold(grayscaleImage,threshImage,30,255,1);
+	threshold(grayscaleImage,threshImage,255,5,1);
 	for(int i=0;i<threshImage.rows;i++) {
 		for(int j=0;i<threshImage.cols;j++) {
-			if((uint)threshImage.at<char>(i,j)>0) {
-				updatedIsNearEdge=true;
+			if((uint)threshImage.at<char>(i,j)==5) {
+				//ROS_INFO("GrayImage: %u",(uint)threshImage.at<char>(i,j));
+				isNearEdge=true;
+				return;
 			}
 		}
 	}
+	//ROS_INFO("Boundary updated to: %d", updatedIsNearEdge);
 	isNearEdge=updatedIsNearEdge;
 }
 
@@ -57,7 +60,7 @@ int main(int argc, char **argv) {
 	ros::NodeHandle n;
 	image_transport::ImageTransport it(n);
 	image_transport::Subscriber sub = it.subscribe("/usb_cam/image_raw",1,boundaryCheckCallback);
-	ros::Subscriber velSub = n.subscribe("/Robosketch/Commands",1000,velocityCallback);
+	ros::Subscriber velSub = n.subscribe("/robosketch/commands",1000,velocityCallback);
 	movementPublisher = n.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/navi",1000);
 	ros::spin();
 	return 0;
