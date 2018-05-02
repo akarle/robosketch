@@ -11,7 +11,8 @@ ROSBUILD_GENMSG()
 ROSBUILD_GENSRV()
 
 SET(libs roslib roscpp)
-ROSBUILD_ADD_LIBRARY(Depth2PC STATIC src/DepthImage2PC.cpp)
+
+ROSBUILD_ADD_LIBRARY(FilterHuman STATIC src/FilterHuman.cpp)
 ROSBUILD_ADD_LIBRARY(HandExtractor STATIC src/HandExtractor.cpp)
 
 find_package(OpenCV)
@@ -21,12 +22,18 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 #uncomment if you have defined services
 #rosbuild_gensrv()
 
-ROSBUILD_ADD_EXECUTABLE(xy2vw src/xy2vw.cpp)
-TARGET_LINK_LIBRARIES(xy2vw ${libs})
+
 
 ROSBUILD_ADD_EXECUTABLE(BoundaryCheck src/BoundaryCheck.cpp)
 TARGET_LINK_LIBRARIES(BoundaryCheck ${libs})
 TARGET_LINK_LIBRARIES(BoundaryCheck ${OpenCV_LIBRARIES})
 
-ROSBUILD_ADD_EXECUTABLE(VelPublisher src/VelPublisher.cpp)
-TARGET_LINK_LIBRARIES(VelPublisher ${libs})
+
+ROSBUILD_ADD_EXECUTABLE(viznode src/viznode.cpp)
+
+ROSBUILD_ADD_EXECUTABLE(testFilterHuman test/testFilterHuman.cpp)
+ROSBUILD_ADD_GTEST_BUILD_FLAGS(testFilterHuman)
+
+TARGET_LINK_LIBRARIES(testFilterHuman FilterHuman ${libs})
+TARGET_LINK_LIBRARIES(viznode ${libs} FilterHuman HandExtractor)
+

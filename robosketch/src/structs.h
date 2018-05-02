@@ -1,3 +1,5 @@
+#ifndef STRUCTS
+#define STRUCTS
 #include <sensor_msgs/PointCloud.h>
 
 struct MovementPair {
@@ -15,7 +17,8 @@ struct Hands {
 // pc --> filtered point cloud
 struct HumanCloud {
     float arm_baseline;
-    float nose_x;
+    float max_x;
+    float min_x;
     sensor_msgs::PointCloud pc;
 };
 
@@ -23,3 +26,4 @@ struct HandClouds {
     std::vector<geometry_msgs::Point32> r_points;
     std::vector<geometry_msgs::Point32> l_points;
 };
+#endif
