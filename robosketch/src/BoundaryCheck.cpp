@@ -10,6 +10,7 @@
 
 ros::Publisher movementPublisher;
 bool isNearEdge = false;
+cv::Mat lastFilteredImage;
 
 void boundaryCheckCallback(const sensor_msgs::ImageConstPtr& msg) {
 	cv_bridge::CvImagePtr cv_ptr;
@@ -23,20 +24,26 @@ void boundaryCheckCallback(const sensor_msgs::ImageConstPtr& msg) {
 	cv::Mat grayscaleImage;
 	cv::cvtColor(colorImage,grayscaleImage,CV_RGB2GRAY);
 	cv::Mat threshImage;
-	bool updatedIsNearEdge = false;
 	threshold(grayscaleImage,threshImage,30,255,1);
-	for(int i=0;i<threshImage.rows;i++) {
+	lastFilteredImage = threshImage.clone();
+	/*for(int i=0;i<threshImage.rows;i++) {
 		for(int j=0;i<threshImage.cols;j++) {
-			if((uint)threshImage.at<char>(i,j)>0) {
-				updatedIsNearEdge=true;
-				break;
+			if(((int)threshImage.at<uchar>(i,j))==255) {
+				updatedIsNearEdge = true;
+				isNearEdge=true;
+				//ROS_INFO("Boundary updated to: %d", updatedIsNearEdge);
+				return;
 			}
 		}
 	}
-	isNearEdge=updatedIsNearEdge;
+	isNearEdge = updatedIsNearEdge;*/
 }
 
+
 void velocityCallback(const geometry_msgs::Twist msg) {
+	isNearEdge = false;
+	isNearEdge = cv::countNonZero(lastFilteredImage)>0;
+	//ROS_INFO("nearEdge: %d", isNearEdge);
 	if(!isNearEdge) {
 		movementPublisher.publish(msg);
 	} else {
@@ -60,7 +67,13 @@ int main(int argc, char **argv) {
 	image_transport::Subscriber sub = it.subscribe("/usb_cam/image_raw",1,boundaryCheckCallback);
 	ros::Subscriber velSub = n.subscribe("/robosketch/commands",1000,velocityCallback);
 	movementPublisher = n.advertise<geometry_msgs::Twist>("/cmd_vel_mux/input/navi",1000);
-	ros::spin();
+	//ros::spin();
+	ros::Rate rate(30);
+	while(true) {
+		isNearEdge = false;
+		ros::spinOnce();
+		rate.sleep();
+	} 
 	return 0;
 }
 
